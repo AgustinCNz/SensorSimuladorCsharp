@@ -15,6 +15,9 @@
             Console.WriteLine("5. Simular sensor de viento");
             Console.WriteLine("6. Simular sensor de presión y radiación");
             Console.WriteLine("7. Mostrar sensores funcionando");
+            Console.WriteLine("8. Sensor de Humedad Extra");
+            Console.WriteLine("9. Sensor de combinacion de Co2 y Temperatura");
+            Console.WriteLine("10. Mostrar ranking de sensores");
             Console.WriteLine("0. Salir");
             Console.Write("Seleccione una opción: ");
             string? opcion = Console.ReadLine();
@@ -41,6 +44,15 @@
                     break;
                 case "7":
                     SensorSimulator.MostrarSensoresFuncionando();
+                    break;
+                case "8":
+                    SensorSimulator.SimulateHumedadExtra();
+                    break;
+                case "9":
+                    SensorSimulator.SimulateCO2yTemperaturaConjuntos();
+                    break;
+                    case "10":
+                    SensorSimulator.MostrarRankingSensores();
                     break;
                 case "0":
                     salir = true;

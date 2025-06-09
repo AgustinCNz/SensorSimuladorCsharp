@@ -179,7 +179,7 @@ public static class SensorSimulator//Este método es public static, por lo tanto
             Console.ReadKey(); // Espera para no cerrar la consola
         }
 
-}
+    }
     public static void MostrarSensoresFuncionando()
     {
         // 1. Lista de sensores (pueden estar activos aunque tengan fallas)
@@ -209,7 +209,113 @@ public static class SensorSimulator//Este método es public static, por lo tanto
         {
             Console.ReadKey(); // Espera a que el usuario presione una tecla
         }
+
     }
+            public static void SimulateHumedadExtra()
+        {
+            // Crea un flujo de 10 valores secuenciales (del 1 al 10)
+            var humedadExtra = Observable.Range(1, 10)
+                // Por cada valor emitido, genera un objeto SensorData
+                .Select(_ => new SensorData
+                {
+                    SensorType = "Humedad Extra",
+                    Value = new Random().Next(40, 91), // Valor aleatorio entre 40 y 90
+                    Timestamp = DateTime.Now
+                })
+                // Imprime cada valor generado sin modificar el flujo
+                .Do(data => Console.WriteLine($"[Humedad Extra] {data.Value}%"));
+
+            // Ejecuta la suscripción para procesar y mostrar los datos
+            using (humedadExtra.Subscribe())
+            {
+                Console.ReadKey(); // Espera a que el usuario presione una tecla antes de cerrar
+            }
+        }
+
+                public static void SimulateCO2yTemperaturaConjuntos()
+        {
+            var random = new Random();
+
+            // Flujo que emite un valor de CO2 aleatorio cada 2 segundos
+            var co2Stream = Observable.Interval(TimeSpan.FromSeconds(2))
+                .Select(_ => random.Next(300, 701)); // Valores entre 300 y 700 ppm
+
+            // Flujo que emite un valor de temperatura aleatorio cada 2 segundos
+            var tempStream = Observable.Interval(TimeSpan.FromSeconds(2))
+                .Select(_ => 20 + random.NextDouble() * 15); // Temperatura entre 20 y 35°C
+
+            // Une cada valor de CO2 con uno de Temperatura usando Zip
+            var combinado = co2Stream.Zip(tempStream, (co2, temp) => new { CO2 = co2, Temperatura = temp })
+                .Take(10) // Limita a 10 pares de medición
+                .Do(d => Console.WriteLine($"Lectura combinada → CO2: {d.CO2} ppm | Temp: {d.Temperatura:F1} °C"))
+                .Where(d => d.CO2 > 500 && d.Temperatura > 28); // Filtra solo cuando ambos valores son altos
+
+            // Ejecuta la simulación y muestra alerta si se cumple la condición
+            using (combinado.Subscribe(
+                d => Console.WriteLine($"⚠️ ALERTA DOBLE → CO2: {d.CO2} ppm, Temp: {d.Temperatura:F1} °C"),
+                () => Console.WriteLine("Fin de la simulación conjunta.")
+            ))
+            {
+                Console.ReadKey(); // Espera para no cerrar la consola
+            }
+        }
+
+        public static void MostrarRankingSensores()
+        {
+            var random = new Random();
+
+            // Definimos umbrales para cada sensor
+            double umbralTemp = 28.0;
+            double umbralHum = 60.0;
+            double umbralCO2 = 500.0;
+
+            // Simula 20 lecturas de temperatura entre 20 y 35
+            var temperatura = Observable.Range(1, 20)
+                .Select(_ => 20 + random.NextDouble() * 15);
+
+            // Simula 20 lecturas de humedad entre 30 y 80
+            var humedad = Observable.Range(1, 20)
+                .Select(_ => 30 + random.NextDouble() * 50);
+
+            // Simula 20 lecturas de CO2 entre 300 y 700
+            var co2 = Observable.Range(1, 20)
+                .Select(_ => random.Next(300, 701));
+
+            // Cuenta cuántas veces cada sensor supera su umbral
+            var conteoTemp = temperatura.Where(v => v > umbralTemp).Count();
+            var conteoHum = humedad.Where(v => v > umbralHum).Count();
+            var conteoCO2 = co2.Where(v => v > umbralCO2).Count();
+
+            // Combina los conteos y genera un ranking
+            Observable.Zip(conteoTemp, conteoHum, conteoCO2, (temp, hum, co2) =>
+            {
+                var resultados = new List<(string sensor, int cantidad)>
+                {
+                    ("Temperatura", temp),
+                    ("Humedad", hum),
+                    ("CO2", co2)
+                };
+
+                Console.WriteLine("\n📊 Ranking de Sensores por emisiones altas:");
+
+                // Ordena de mayor a menor cantidad de alertas y las muestra
+                foreach (var item in resultados.OrderByDescending(x => x.cantidad))
+                {
+                    Console.WriteLine($"{item.sensor}: {item.cantidad} emisiones altas");
+                }
+
+                return true;
+            })
+            .Subscribe(_ =>
+            {
+                Console.WriteLine("\nPresione una tecla para continuar...");
+            });
+
+            Console.ReadKey(); // Espera antes de cerrar
+        }
+
+
+
 }
 
     

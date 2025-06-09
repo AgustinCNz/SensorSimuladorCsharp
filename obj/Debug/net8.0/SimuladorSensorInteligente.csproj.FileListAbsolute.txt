@@ -34,3 +34,4 @@ C:\Users\Gusti\source\programacionIII2025\SimuladorSensorInteligente\obj\Debug\n
 C:\Users\Gusti\source\programacionIII2025\SimuladorSensorInteligente\obj\Debug\net8.0\SimuladorSensorInteligente.pdb
 C:\Users\Gusti\source\programacionIII2025\SimuladorSensorInteligente\obj\Debug\net8.0\SimuladorSensorInteligente.genruntimeconfig.cache
 C:\Users\Gusti\source\programacionIII2025\SimuladorSensorInteligente\obj\Debug\net8.0\ref\SimuladorSensorInteligente.dll
+C:\Users\Gusti\source\programacionIII2025\SimuladorSensorInteligente\obj\Debug\net8.0\SimuladorSensorInteligente.sourcelink.json
